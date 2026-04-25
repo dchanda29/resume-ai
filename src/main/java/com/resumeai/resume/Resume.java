@@ -21,6 +21,9 @@ public class Resume {
 
     private String fileType;
 
+    @Column(columnDefinition = "TEXT")
+    private String extractedText;
+
     // Getters and Setters
     public Long getId() {
         return id;
@@ -60,5 +63,13 @@ public class Resume {
 
     public void setFileType(String fileType) {
         this.fileType = fileType;
+    }
+
+    public String getExtractedText() {
+        return extractedText;
+    }
+
+    public void setExtractedText(String extractedText) {
+        this.extractedText = extractedText;
     }
 }

@@ -3,6 +3,11 @@ package com.resumeai.feedback;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class GeminiClient {
@@ -20,16 +25,31 @@ public class GeminiClient {
     }
 
     public String getFeedback(String resumeText) {
-        // Placeholder for calling Gemini API for feedback
-        // In a real scenario, you\'d construct a request body and send it to the Gemini API
-        // For now, returning a dummy response
-        return "{\"feedback\": \"This is a dummy feedback for your resume.\"}";
+        String prompt = "Provide structured feedback for the following resume in JSON format, highlighting strengths, weaknesses, and suggestions for improvement:\n\n" + resumeText;
+        return callGeminiApi(prompt);
     }
 
     public String chatWithGemini(String resumeText, String chatHistory, String userQuestion) {
-        // Placeholder for calling Gemini API for chat
-        // In a real scenario, you\'d construct a request body with resumeText, chatHistory, and userQuestion
-        // For now, returning a dummy response
-        return "{\"response\": \"This is a dummy chat response from Gemini.\"}";
+        String prompt = "Given the following resume:\n" + resumeText + "\n\nAnd the chat history:\n" + chatHistory + "\n\nUser asks: " + userQuestion + "\n\nProvide a concise answer.";
+        return callGeminiApi(prompt);
+    }
+
+    private String callGeminiApi(String prompt) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+
+        Part part = new Part(prompt);
+        Content content = new Content(Collections.singletonList(part));
+        GeminiRequest request = new GeminiRequest(Collections.singletonList(content));
+
+        HttpEntity<GeminiRequest> entity = new HttpEntity<>(request, headers);
+
+        GeminiResponse response = restTemplate.postForObject(geminiApiUrl + geminiApiKey, entity, GeminiResponse.class);
+
+        if (response != null && !response.getCandidates().isEmpty()) {
+            return response.getCandidates().get(0).getContent().getParts().get(0).getText();
+        }
+        return "No response from Gemini API.";
     }
 }
