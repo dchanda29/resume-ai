@@ -23,5 +23,5 @@ jwt:
 
 gemini:
   api:
-    key: your_gemini_api_key_here
+    key: AIzaSyCrl2mKViFzcZunpvBcHylYjplct45TKTA
     url: https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=
