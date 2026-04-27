@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import java.io.ByteArrayInputStream;
+//import java.io.ByteArrayInputStream;
+import org.apache.pdfbox.Loader;
 
 @Service
 public class ResumeService {
@@ -42,8 +43,14 @@ public class ResumeService {
         }
     }
 
-    public String extractTextFromPdf(byte[] pdfBytes) throws IOException {
+    /*public String extractTextFromPdf(byte[] pdfBytes) throws IOException {
         try (PDDocument document = PDDocument.load(new ByteArrayInputStream(pdfBytes))) {
+            PDFTextStripper pdfTextStripper = new PDFTextStripper();
+            return pdfTextStripper.getText(document);
+        }
+    }*/
+    public String extractTextFromPdf(byte[] pdfBytes) throws IOException {
+        try (PDDocument document = Loader.loadPDF(pdfBytes)) {
             PDFTextStripper pdfTextStripper = new PDFTextStripper();
             return pdfTextStripper.getText(document);
         }

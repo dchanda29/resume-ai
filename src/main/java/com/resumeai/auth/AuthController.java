@@ -1,5 +1,6 @@
 package com.resumeai.auth;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,15 +17,15 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestBody RegistrationRequest registrationRequest) {
-        // Logic for user registration
-        return "User registered successfully";
+    public ResponseEntity<AuthResponse> register(@RequestBody RegistrationRequest request) {
+        String token = authService.register(request);
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 
     @PostMapping("/login")
-    public String loginUser(@RequestBody LoginRequest loginRequest) {
-        // Logic for user login and JWT generation
-        return "User logged in successfully";
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+        String token = authService.login(request);
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 }
 
