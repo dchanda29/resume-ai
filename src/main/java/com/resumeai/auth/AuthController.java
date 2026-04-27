@@ -16,16 +16,25 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegistrationRequest request) {
-        String token = authService.register(request);
-        return ResponseEntity.ok(new AuthResponse(token));
-    }
+//    @PostMapping("/register")
+//    public ResponseEntity<AuthResponse> register(@RequestBody RegistrationRequest request) {
+//        String token = authService.register(request);
+//        return ResponseEntity.ok(new AuthResponse(token));
+//    }
+//
+//    @PostMapping("/login")
+//    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+//        String token = authService.login(request);
+//        return ResponseEntity.ok(new AuthResponse(token));
+//    }
+@PostMapping("/register")
+public ResponseEntity<AuthResponse> register(@RequestBody RegistrationRequest request) {
+    return ResponseEntity.ok(authService.register(request));
+}
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        String token = authService.login(request);
-        return ResponseEntity.ok(new AuthResponse(token));
+        return ResponseEntity.ok(authService.login(request));
     }
 }
 

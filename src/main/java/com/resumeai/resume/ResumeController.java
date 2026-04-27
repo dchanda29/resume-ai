@@ -1,5 +1,6 @@
 package com.resumeai.resume;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,15 +19,27 @@ public class ResumeController {
     }
 
     @PostMapping("/upload")
-    public Object uploadResume(@RequestParam("file") MultipartFile file, @RequestParam("userId") Long userId) throws IOException {
-        String result = resumeService.uploadResume(file, userId); // Calls service
-        return Map.of("message", result, "resumeId", 1, "fileName", file.getOriginalFilename());
+    public ResponseEntity<Map<String, Object>> uploadResume(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("userId") Long userId) throws IOException {
+
+        Resume resume = resumeService.uploadResume(file, userId);
+
+        if (resume == null) {
+            return ResponseEntity.badRequest().body(Map.of("message", "User not found"));
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Resume uploaded successfully",
+                "resumeId", resume.getId(),
+                "fileName", resume.getFileName(),
+                "extractedText", resume.getExtractedText() != null ? resume.getExtractedText() : ""
+        ));
     }
 
-
     @GetMapping("/history")
-    public List<String> getResumeHistory() {
-        // Logic for retrieving user's resume upload history
-        return List.of("resume1.pdf", "resume2.docx");
+    public ResponseEntity<List<Resume>> getResumeHistory(@RequestParam("userId") Long userId) {
+        List<Resume> history = resumeService.getResumeHistory(userId);
+        return ResponseEntity.ok(history);
     }
 }

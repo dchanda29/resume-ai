@@ -18,8 +18,7 @@ public class AuthService {
         this.jwtUtil = jwtUtil;
     }
 
-    public String register(RegistrationRequest request) {
-        // Check if user already exists
+    public AuthResponse register(RegistrationRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
@@ -32,11 +31,11 @@ public class AuthService {
 
         userRepository.save(user);
 
-        return jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateToken(user.getEmail());
+        return new AuthResponse(token, user.getId(), user.getName(), user.getEmail(), user.getPhone());
     }
 
-    public String login(LoginRequest request) {
-        // Find user by email or phone
+    public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmailOrPhone())
                 .or(() -> userRepository.findByPhone(request.getEmailOrPhone()))
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -45,6 +44,7 @@ public class AuthService {
             throw new RuntimeException("Invalid password");
         }
 
-        return jwtUtil.generateToken(user.getEmail());
+        String token = jwtUtil.generateToken(user.getEmail());
+        return new AuthResponse(token, user.getId(), user.getName(), user.getEmail(), user.getPhone());
     }
 }
