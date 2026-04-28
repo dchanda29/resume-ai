@@ -3,6 +3,7 @@ package com.resumeai.resume;
 import com.resumeai.user.User;
 import com.resumeai.user.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -23,6 +24,10 @@ public class ResumeService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
+    // @Transactional — wraps the entire upload in one DB transaction.
+    // Required for PostgreSQL to correctly write bytea columns without
+    // the "Large Objects in auto-commit mode" error.
     public Resume uploadResume(MultipartFile file, Long userId) throws IOException {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
@@ -50,6 +55,10 @@ public class ResumeService {
         }
     }
 
+    @Transactional(readOnly = true)
+    // readOnly = true — opens a real transaction for the SELECT query.
+    // Without this, Hibernate reads bytea outside a transaction, which
+    // causes PostgreSQL to throw "Large Objects in auto-commit mode".
     public List<Resume> getResumeHistory(Long userId) {
         return resumeRepository.findByUserId(userId);
     }

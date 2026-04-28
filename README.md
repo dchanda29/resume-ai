@@ -48,6 +48,17 @@ cp .env.example .env
 ### 3. Get a Gemini API key (free)
 Go to https://aistudio.google.com → Get API Key → copy it to your `.env`
 
+### Gemini API usage
+The app uses Google Gemini for AI-powered resume analysis and chat. If you don't set `GEMINI_API_KEY`, the application will still run (or you can run with the `dev` profile), but any endpoints that rely on Gemini (feedback, chat) will be disabled or return errors.
+
+To enable Gemini features, set the environment variable:
+
+```powershell
+$env:GEMINI_API_KEY = 'your_key_here'
+```
+
+On production hosts (e.g., Render), add `GEMINI_API_KEY` in the service's environment settings.
+
 ### 4. Set up PostgreSQL
 Use Supabase (free) or run locally:
 ```bash
@@ -60,6 +71,25 @@ docker run --name resumeai-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=resum
 ```
 
 The API is now running at `http://localhost:8080`
+
+### Local development with H2 (no Postgres required)
+
+You can run the application using an in-memory H2 database for quick local development and testing.
+
+Run with the `dev` Spring profile (enables H2):
+```bash
+./gradlew bootRun -Dspring-boot.run.profiles=dev
+```
+
+Or set the environment variable:
+```powershell
+#$env:SPRING_PROFILES_ACTIVE = 'dev'
+./gradlew bootRun
+```
+
+Access the H2 console at `http://localhost:8080/h2-console` and use JDBC URL `jdbc:h2:mem:resumeai`, user `sa` with no password.
+
+When you're ready to use Postgres again, unset the profile or run without `dev` and set `DB_URL`, `DB_USERNAME`, and `DB_PASSWORD` as described above.
 
 ---
 

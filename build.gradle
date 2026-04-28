@@ -21,6 +21,8 @@ dependencies {
 
     // PostgreSQL
     runtimeOnly 'org.postgresql:postgresql'
+    // Embedded H2 for local development (activate with 'dev' profile)
+    runtimeOnly 'com.h2database:h2'
 
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
