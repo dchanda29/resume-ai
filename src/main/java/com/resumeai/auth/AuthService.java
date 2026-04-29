@@ -20,7 +20,7 @@ public class AuthService {
 
     public AuthResponse register(RegistrationRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new RuntimeException("Email already registered");
+            throw new RuntimeException("Email already registered. Please login.");
         }
 
         User user = new User();
@@ -38,7 +38,7 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmailOrPhone())
                 .or(() -> userRepository.findByPhone(request.getEmailOrPhone()))
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found. Register as New User"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid password");
