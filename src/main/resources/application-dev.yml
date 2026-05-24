@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:resumeai;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+# Enable H2 console for local debugging
+spring.h2.console:
+  enabled: true
+  path: /h2-console
+
+# Provide dev JWT secret so `${JWT_SECRET}` resolves during dev runs.
+jwt:
+  secret: dev-secret-please-change-for-production
+  expiration: 86400000
+
+# Provide empty Gemini values to avoid placeholder resolution errors in dev
+gemini:
+  api:
+    key: ""
+    url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+
+app:
+  cors:
+    allowed-origins: "http://localhost:3000,http://localhost:5173"
+
+# Use a different server port if you want to run alongside another service
+# server:
+#   port: 8080

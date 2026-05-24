@@ -35,6 +35,10 @@ public class GeminiClient {
     }
 
     private String callGeminiApi(String prompt) {
+        if (geminiApiKey == null || geminiApiKey.isBlank()) {
+            throw new IllegalStateException("GEMINI_API_KEY is not configured.");
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
@@ -45,11 +49,16 @@ public class GeminiClient {
 
         HttpEntity<GeminiRequest> entity = new HttpEntity<>(request, headers);
 
-        GeminiResponse response = restTemplate.postForObject(geminiApiUrl + geminiApiKey, entity, GeminiResponse.class);
+        GeminiResponse response = restTemplate.postForObject(buildGeminiUrl(), entity, GeminiResponse.class);
 
         if (response != null && !response.getCandidates().isEmpty()) {
             return response.getCandidates().get(0).getContent().getParts().get(0).getText();
         }
         return "No response from Gemini API.";
+    }
+
+    private String buildGeminiUrl() {
+        String separator = geminiApiUrl.contains("?") ? "&" : "?";
+        return geminiApiUrl + separator + "key=" + geminiApiKey;
     }
 }
